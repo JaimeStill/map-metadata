@@ -28,6 +28,10 @@ The current intent of this project is to be able to generate a hierarchical loca
 * [Yarn](https://classic.yarnpkg.com/lang/en/)
 * [shapefile](https://github.com/mbostock/shapefile)
 * [ndjson-cli](https://github.com/mbostock/ndjson-cli)
+* [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-editions-express)
+* [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
+* [.NET Core SDK](https://dotnet.microsoft.com/download)
+* [Node.js - Current](https://nodejs.org/en/)
 
 ## Getting Started
 [Back to Top](#map-metadata)  
