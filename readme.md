@@ -1,8 +1,36 @@
 # Map Metadata
 
+* [Resources](#resources)
+* [Getting Started](#getting-started)
+    * [Database Seeding](#database-seeding)
+    * [Running the Project](#running-the-project)
+* [JSON Metadata Generation](#json-metadata-generation)
+* [Metadata Properties](#metadata-properties)
+    * [Country Metadata Properties Retained](#country-metadata-properties-retained)
+    * [State / Province Metadata Properties Retained](#state--province-metadata-properties-retained)
+    * [Populated Places Properties Retained](#populated-places-properties-retained)
+* [Database Schema](#database-schema)
+* [Shapefile Metadata Models](#shapefile-metadata-models)
+* [Database Seeding Strategy](#database-seeding-strategy)
+* [Identified Issues](#identified-issues)
+    * [Populated Places Not Corresponding to States / Provinces](#populated-places-not-corresponding-to-states--provinces)
+    * [Populated Places Without ADM1NAME](#populated-places-without-adm1name)
+
 The current intent of this project is to be able to generate a hierarchical location database based on metadata acquired from Natural Earth shapefiles. This will then enable the dynamic generation of data visualization maps based on data tied to these locations. Because the locations would be hierarchically linked, more options are available in terms of relating and visualizing the data.
 
+## Resources
+[Back to Top](#map-metadata)  
+
+* [Natural Earth - 1:10m Cultural Vectors](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/)
+    * [Admin 0 - Countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/)
+    * [Admin 1 - States, Provinces](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/)
+    * [Populated Places](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/)
+* [Yarn](https://classic.yarnpkg.com/lang/en/)
+* [shapefile](https://github.com/mbostock/shapefile)
+* [ndjson-cli](https://github.com/mbostock/ndjson-cli)
+
 ## Getting Started
+[Back to Top](#map-metadata)  
 
 This project is written using a .NET Core 3.x backend and an Angular 9.x front end and uses Yarn for package management.
 
@@ -12,7 +40,8 @@ Currently, the [Angular project](./src/MapFramework.Web/ClientApp) is a base tem
 
 > See the [Mapper](https://github.com/JaimeStill/Mapper) repository for the initial research leading to this project.
 
-### Database Seeding  
+### Database Seeding
+[Back to Top](#map-metadata)  
 
 > You will need to make sure you have the [dotnet-ef](https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dotnet) tool correctly installed.  
 
@@ -31,20 +60,12 @@ dotnet run -- "Server=(localdb)\Projectsv13;Database=MapFramework-dev;Trusted_Co
 ```
 
 ### Running the Project
+[Back to Top](#map-metadata)  
 
 From the command line, change into the [MapFramework.Web](./src/MapFramework.Web) directory, and run `dotnet run`. After the dependencies have been installed, if they are missing, and the Angular application has compiled, you can navigate to http://localhost:5000.
 
-## Resources
-
-* [Natural Earth - 1:10m Cultural Vectors](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/)
-    * [Admin 0 - Countries](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-0-countries/)
-    * [Admin 1 - States, Provinces](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-admin-1-states-provinces/)
-    * [Populated Places](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/)
-* [Yarn](https://classic.yarnpkg.com/lang/en/)
-* [shapefile](https://github.com/mbostock/shapefile)
-* [ndjson-cli](https://github.com/mbostock/ndjson-cli)
-
-## JSON Metadata Generation  
+## JSON Metadata Generation
+[Back to Top](#map-metadata)  
 
 The following strategy is used to extract metadata from shapefiles:
 
@@ -59,6 +80,7 @@ shp2json -n sources\10m_cultural\countries.shp | ndjson-map "d.properties" | ndj
 The intent is to be able to extract country, state / province, and city / town data, then be able to generate a database hierarchically linking them.
 
 ## Metadata Properties
+[Back to Top](#map-metadata)  
 
 Feature | Description
 --------|------------
@@ -66,6 +88,7 @@ Feature | Description
 `scalerank` | Numbers from 0 - 9 which indicate the importance of a feature (lower is more important).
 
 ### Country Metadata Properties Retained
+[Back to Top](#map-metadata)  
 
 ``` json
 {
@@ -99,6 +122,7 @@ Feature | Description
 ```
 
 ### State / Province Metadata Properties Retained
+[Back to Top](#map-metadata)  
 
 ```json
 {
@@ -133,6 +157,7 @@ Feature | Description
 ```
 
 ### Populated Places Properties Retained
+[Back to Top](#map-metadata)  
 
 ```json
 {
@@ -163,6 +188,7 @@ Feature | Description
 ```  
 
 ## Database Schema
+[Back to Top](#map-metadata)  
 
 The following Entity Framework Core entity classes store data extracted from their corresponding metadata files, as well as foreign key definitions establishing a locational hierarchy:
 
@@ -171,6 +197,7 @@ The following Entity Framework Core entity classes store data extracted from the
 * [City](./src/MapFramework.Data/Entities/City.cs) - Data extracted from [populated-places.json](./data/10m_cultural/populated-places.json)
 
 ## Shapefile Metadata Models
+[Back to Top](#map-metadata)  
 
 The following classes are used to deserialize the shapefile metadata into a .NET Core class that can then map that data to an Entity Framework Core entity class:
 
@@ -179,6 +206,7 @@ The following classes are used to deserialize the shapefile metadata into a .NET
 * [ShapeCity](./src/MapFramework.Data/Models/ShapeCity.cs)
 
 ## Database Seeding Strategy
+[Back to Top](#map-metadata)  
 
 The methods contained in [DbInitializer.cs](./src/MapFramework.Data/Extensions/DbInitailizer.cs) run as the [dbseeder](./src/dbseeder) command line utility, which receives a [connection string](./src/MapFramework.Web/appsettings.Development.json) and a path string to [a directory](./data/10m_cultural/) that contains the following files:
 
@@ -199,8 +227,10 @@ The strategy for generating the data is as follows:
     * `Adm1Name` being contained in `State.NameEn`
 
 ## Identified Issues
+[Back to Top](#map-metadata)  
 
 ### Populated Places Not Corresponding to States / Provinces
+[Back to Top](#map-metadata)  
 
 The following SQL Statement was run after generating the database:
 
@@ -221,7 +251,8 @@ where s.CountryId is null
 
 The resultant output, *379 rows*, can be found in the [artifact-states.csv](./documents/artifact-states.csv) supporting document.
 
-### Populated Places Without ADM1NNAME  
+### Populated Places Without ADM1NAME
+[Back to Top](#map-metadata)  
 
 Laascaanood  
 Ceerigaabo  
@@ -342,3 +373,5 @@ Nassau
 Nicosia  
 Singapore  
 Hong Kong  
+
+[Back to Top](#map-metadata)  
