@@ -2,6 +2,38 @@
 
 The current intent of this project is to be able to generate a hierarchical location database based on metadata acquired from Natural Earth shapefiles. This will then enable the dynamic generation of data visualization maps based on data tied to these locations. Because the locations would be hierarchically linked, more options are available in terms of relating and visualizing the data.
 
+## Getting Started
+
+This project is written using a .NET Core 3.x backend and an Angular 9.x front end and uses Yarn for package management.
+
+The project is also using Entity Framework Core linked to a development SQL Server Express instance, so you'll need to make sure the [connection string](./src/MapFramework.Web/appsettings.Development.json) corresponds correctly to your SQL Server instance.
+
+Currently, the [Angular project](./src/MapFramework.Web/ClientApp) is a base template until I can get the location database figured out. Then, I'll start working the process of generating data visualizations using [d3-geo](https://github.com/d3/d3-geo) based on associated data.
+
+> See the [Mapper](https://github.com/JaimeStill/Mapper) repository for the initial research leading to this project.
+
+### Database Seeding  
+
+> You will need to make sure you have the [dotnet-ef](https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dotnet) tool correctly installed.  
+
+1. From a command line, change into the [MapFramework.Data](./src/MapFramework.Data) directory and run: `dotnet ef migrations add "initial" -s ../MapFramework.Web`
+
+2. Change into the [dbseeder](./src/dbseeder) directory and run: `dotnet run -- [connectionString] [mapDataDirectory]`
+
+Note that while `\` need to be escaped in `appsettings.Development.json`, they should not be escaped on the command line.
+
+**example**  
+
+> Note that the `--` following `dotnet run` passes arguments to the application being run by .NET Core.
+
+```cmd
+dotnet run -- "Server=(localdb)\Projectsv13;Database=MapFramework-dev;Trusted_Connection=True;" "E:\Jaime\.me\maps\data\10m_cultural\"
+```
+
+### Running the Project
+
+From the command line, change into the [MapFramework.Web](./src/MapFramework.Web) directory, and run `dotnet run`. After the dependencies have been installed, if they are missing, and the Angular application has compiled, you can navigate to http://localhost:5000.
+
 ## Resources
 
 * [Natural Earth - 1:10m Cultural Vectors](https://www.naturalearthdata.com/downloads/10m-cultural-vectors/)
